@@ -17,7 +17,7 @@ class Gui:
         self.warn = tk.Label(root, text="", fg="#b35c00")
         self.warn.pack(fill="x", padx=10)
 
-        tk.Button(root, text="Выбрать из палитры...", command=self.open_palette).pack(padx=10, pady=(0, 10), anchor="w")
+        tk.Button(root, text="выбрать из палитры", command=self.open_palette).pack(padx=10, pady=(0, 10), anchor="w")
 
         self.rgb = self.block(root, "RGB", [("R", 0, 255, 1), ("G", 0, 255, 1), ("B", 0, 255, 1)], self.on_rgb)
         self.cmyk = self.block(root, "CMYK", [("C", 0, 1, 0.01), ("M", 0, 1, 0.01), ("Y", 0, 1, 0.01), ("K", 0, 1, 0.01)], self.on_cmyk)
