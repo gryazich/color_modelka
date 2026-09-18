@@ -6,6 +6,8 @@ class Gui:
     def __init__(self, root):
         self.vm = Vm()
         self.busy = False
+        self.root = root
+        self.after_id = None
         root.title("Цветовые модели: RGB / CMYK / HLS")
         root.geometry("560x560")
 
@@ -34,11 +36,26 @@ class Gui:
             var = tk.StringVar()
             ent = tk.Entry(row, textvariable=var, width=8)
             ent.pack(side="left")
-            ent.bind("<Return>", lambda e, c=cb: c())
-            sld = tk.Scale(row, from_=lo, to=hi, resolution=step, orient="horizontal", showvalue=False, command=lambda v, c=cb: c())
+            sld = tk.Scale(row, from_=lo, to=hi, resolution=step, orient="horizontal", showvalue=False, command=lambda v, c=cb: self.schedule(c))
+            ent.bind("<Return>", lambda e, v=var, s=sld, lo=lo, hi=hi, c=cb: self.apply_entry(v, s, lo, hi, c))
+            ent.bind("<FocusOut>", lambda e, v=var, s=sld, lo=lo, hi=hi, c=cb: self.apply_entry(v, s, lo, hi, c))
             sld.pack(side="left", fill="x", expand=True, padx=5)
             widgets[name] = (var, sld)
         return widgets
+
+    def apply_entry(self, var, sld, lo, hi, cb):
+        try:
+            v = float(var.get())
+        except ValueError:
+            return
+        v = max(lo, min(hi, v))
+        sld.set(v)
+        cb()
+
+    def schedule(self, cb):
+        if self.after_id is not None:
+            self.root.after_cancel(self.after_id)
+        self.after_id = self.root.after(25, cb)
 
     def read(self, widgets, keys):
         return [widgets[k][1].get() for k in keys]
